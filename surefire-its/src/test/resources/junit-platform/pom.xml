@@ -33,16 +33,10 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
-    <!--
-        Declare "junit-jupiter-engine" dependency because the
-        Jupiter Engine is needed at test runtime. Artifacts
-        needed for test compilation, like "junit-jupiter-api",
-        are pulled-in via transitive dependency resolution.
-    -->
     <dependencies>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
+            <artifactId>junit-jupiter-api</artifactId>
             <version>${jupiter.version}</version>
             <scope>test</scope>
         </dependency>

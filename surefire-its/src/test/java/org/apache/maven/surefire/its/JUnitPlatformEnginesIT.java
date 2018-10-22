@@ -59,7 +59,7 @@ public class JUnitPlatformEnginesIT
     public static Iterable<Object[]> regexVersions()
     {
         ArrayList<Object[]> args = new ArrayList<Object[]>();
-        args.add( new Object[] { "1.0.0", "5.0.0", "1.0.0", "1.0.0" } );
+        args.add( new Object[] { "1.0.3", "5.0.3", "1.0.0", "1.0.0" } );
         args.add( new Object[] { "1.1.1", "5.1.1", "1.0.0", "1.0.0" } );
         args.add( new Object[] { "1.2.0", "5.2.0", "1.1.0", "1.0.0" } );
         args.add( new Object[] { "1.3.1", "5.3.1", "1.1.1", "1.0.0" } );
@@ -93,12 +93,10 @@ public class JUnitPlatformEnginesIT
         String testClasspath = "[DEBUG] test(compact) classpath:"
                 + "  test-classes"
                 + "  classes"
-                + "  junit-jupiter-engine-" + jupiter + ".jar"
+                + "  junit-jupiter-api-" + jupiter + ".jar"
                 + "  apiguardian-api-" + apiguardian + ".jar"
-                + "  junit-platform-engine-" + platform + ".jar"
-                + "  junit-platform-commons-" + platform + ".jar"
                 + "  opentest4j-" + opentest + ".jar"
-                + "  junit-jupiter-api-" + jupiter + ".jar";
+                + "  junit-platform-commons-" + platform + ".jar";
 
         List<String> lines = validator.loadLogLines( startsWith( "[DEBUG] test(compact) classpath" ) );
 
@@ -114,7 +112,9 @@ public class JUnitPlatformEnginesIT
                 + "  surefire-api-*.jar"
                 + "  surefire-logger-api-*.jar"
                 + "  common-java5-*.jar"
-                + "  junit-platform-launcher-1.3.1.jar";
+                + "  junit-platform-launcher-" + platform + ".jar"
+                + "  junit-platform-engine-" + platform + ".jar"
+                + "  junit-jupiter-engine-" + jupiter + ".jar";
 
         lines = validator.loadLogLines( startsWith( "[DEBUG] provider(compact) classpath" ) );
 
@@ -131,14 +131,15 @@ public class JUnitPlatformEnginesIT
                 + "  surefire-logger-api-*.jar"
                 + "  test-classes"
                 + "  classes"
-                + "  junit-jupiter-engine-" + jupiter + ".jar"
-                + "  apiguardian-api-" + apiguardian + ".jar"
-                + "  junit-platform-engine-" + platform + ".jar"
-                + "  junit-platform-commons-" + platform + ".jar"
-                + "  opentest4j-" + opentest + ".jar"
                 + "  junit-jupiter-api-" + jupiter + ".jar"
+                + "  apiguardian-api-" + apiguardian + ".jar"
+                + "  opentest4j-" + opentest + ".jar"
+                + "  junit-platform-commons-" + platform + ".jar"
                 + "  surefire-junit-platform-*.jar"
-                + "  junit-platform-launcher-1.3.1.jar";
+                + "  common-java5-*.jar"
+                + "  junit-platform-launcher-" + platform + ".jar"
+                + "  junit-platform-engine-" + platform + ".jar"
+                + "  junit-jupiter-engine-" + jupiter + ".jar";
 
         lines = validator.loadLogLines( startsWith( "[DEBUG] boot(compact) classpath" ) );
 
