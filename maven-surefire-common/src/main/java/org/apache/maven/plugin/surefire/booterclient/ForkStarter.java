@@ -324,12 +324,17 @@ public class ForkStarter
         {
             tests.add( clazz.getName() );
         }
+        int testsSize = tests.size();
+        final Queue<String> q1= new ConcurrentLinkedQueue<>();
+        for (int ii=0; ii < 5; ii++) {
+            q1.add(tests.poll());
+        }
 
         final Queue<TestProvidingInputStream> testStreams = new ConcurrentLinkedQueue<>();
 
-        for ( int forkNum = 0, total = min( forkCount, tests.size() ); forkNum < total; forkNum++ )
+        for ( int forkNum = 0, total = min( forkCount, q1.size() ); forkNum < total; forkNum++ )
         {
-            testStreams.add( new TestProvidingInputStream( tests ) );
+            testStreams.add( new TestProvidingInputStream( q1 ) );
         }
 
         ScheduledFuture<?> ping = triggerPingTimerForShutdown( testStreams );
@@ -342,35 +347,28 @@ public class ForkStarter
             final AtomicInteger notifyStreamsToSkipTestsJustNow = new AtomicInteger( failFastCount );
             final Collection<Future<RunResult>> results = new ArrayList<>( forkCount );
             final AtomicBoolean printedErrorStream = new AtomicBoolean();
-            for ( final TestProvidingInputStream testProvidingInputStream : testStreams )
-            {
-                Callable<RunResult> pf = new Callable<RunResult>()
-                {
+            for ( final TestProvidingInputStream testProvidingInputStream : testStreams ) {
+                Callable<RunResult> pf = new Callable<RunResult>() {
                     @Override
-                    public RunResult call()
-                        throws Exception
-                    {
+                    public RunResult call() throws Exception {
                         int forkNumber = drawNumber();
                         DefaultReporterFactory reporter =
                                 new DefaultReporterFactory( startupReportConfiguration, log, forkNumber );
                         defaultReporterFactories.add( reporter );
                         ForkClient forkClient = new ForkClient( reporter, testProvidingInputStream, log,
-                                printedErrorStream, forkNumber )
-                        {
+                                printedErrorStream, forkNumber ) {
                             @Override
-                            protected void stopOnNextTest()
-                            {
-                                if ( countDownToZero( notifyStreamsToSkipTestsJustNow ) )
-                                {
+                            protected void stopOnNextTest() {
+                                if ( countDownToZero( notifyStreamsToSkipTestsJustNow )){
                                     notifyStreamsToSkipTests( testStreams );
                                 }
                             }
                         };
-                        Map<String, String> providerProperties = providerConfiguration.getProviderProperties();
                         try
                         {
-                            return fork( null, new PropertiesWrapper( providerProperties ), forkClient,
-                                    effectiveSystemProperties, forkNumber, testProvidingInputStream, true );
+
+                            return fork( null, new PropertiesWrapper(  providerConfiguration.getProviderProperties() ),
+                                    forkClient, effectiveSystemProperties, forkNumber, testProvidingInputStream, true );
                         }
                         finally
                         {
