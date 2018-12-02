@@ -326,7 +326,7 @@ public class ForkStarter
         }
         int testsSize = tests.size();
         final Queue<String> q1= new ConcurrentLinkedQueue<>();
-        for (int ii=0; ii < 5; ii++) {
+        for (int ii = 0; ii < min(5, testsSize); ii++) {
             q1.add(tests.poll());
         }
 
@@ -366,7 +366,6 @@ public class ForkStarter
                         };
                         try
                         {
-
                             return fork( null, new PropertiesWrapper(  providerConfiguration.getProviderProperties() ),
                                     forkClient, effectiveSystemProperties, forkNumber, testProvidingInputStream, true );
                         }
@@ -378,7 +377,8 @@ public class ForkStarter
                 };
                 results.add( executorService.submit( pf ) );
             }
-            return awaitResultsDone( results, executorService );
+            awaitResultsDone( results, executorService );
+            return new RunResult(0,0,0,0);
         }
         finally
         {
