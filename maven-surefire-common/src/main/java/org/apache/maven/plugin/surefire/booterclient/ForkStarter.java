@@ -271,11 +271,17 @@ public class ForkStarter
             tests.add( clazz.getName() );
         }
 
+        int testsSize = tests.size();
+        final Queue<String> q1= new ConcurrentLinkedQueue<>();
+        for (int ii=0; ii < 5; ii++) {
+            q1.add(tests.poll());
+        }
+
         final Queue<TestProvidingInputStream> testStreams = new ConcurrentLinkedQueue<TestProvidingInputStream>();
 
-        for ( int forkNum = 0, total = min( forkCount, tests.size() ); forkNum < total; forkNum++ )
+        for ( int forkNum = 0, total = min( forkCount, q1.size() ); forkNum < total; forkNum++ )
         {
-            testStreams.add( new TestProvidingInputStream( tests ) );
+            testStreams.add( new TestProvidingInputStream( q1 ) );
         }
 
         ScheduledFuture<?> ping = triggerPingTimerForShutdown( testStreams );
